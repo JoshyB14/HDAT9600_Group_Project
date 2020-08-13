@@ -219,6 +219,21 @@ ggplot(data = icu_patients_df1, aes(x = SOFA)) + geom_histogram(fill = "cornflow
 summary(icu_patients_df1$SAPS1)
 ggplot(data = icu_patients_df1, aes(x = SAPS1)) + geom_histogram(fill = "salmon1") 
 ```
+```{r}
+# Fitting univariate models for the predictors chosen so far
+
+# Univariate fits
+age_uni_fit <- glm(in_hospital_death ~ Age, family  = "binomial", data = icu_patients_df1)
+gender_uni_fit <- glm(in_hospital_death ~ Gender, family = "binomial", data = icu_patients_df1)
+SAPS_uni_fit <- glm(in_hospital_death ~ SAPS1, family = "binomial", data = icu_patients_df1)
+SOFA_uni_fit <- glm(in_hospital_death ~ SOFA, family = "binomial", data = icu_patients_df1)
+
+# Summaries
+summary(age_uni_fit) # significant
+summary(gender_uni_fit) # non significant
+summary(SAPS_uni_fit) # significant
+summary(SOFA_uni_fit) # significant
+```
 
 
 
