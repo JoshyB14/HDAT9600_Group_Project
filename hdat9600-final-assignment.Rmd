@@ -197,7 +197,6 @@ icu_patients_df1 <- readRDS("icu_patients_df1.rds")
 
 # -------------------- General summary statistics by variable ----------------#
 summary(icu_patients_df1$Age)
-summary(icu_patients_df1$Height)
 table(icu_patients_df1$Gender)
 
 # ----------------------  Age by gender ------------------------------------- #
@@ -208,18 +207,17 @@ ggplot(data = icu_patients_df1, aes(x = Age, fill = Gender)) + geom_histogram() 
 # Summary Statistics
 group_by(icu_patients_df1, Gender) %>% summarize(mean_age = mean(Age))
 
+```
+```{r}
+# EDA for clinical variables
 
-# ----------------------- Height by gender -------------------------------------#
-# Plot
-# We see that there are some very tall women (400+) and some obs near 0, so the second plot
-  # restricts the axes to where the bulk of the observations are
-ggplot(data = icu_patients_df1, aes(x = Height, fill = Gender)) + geom_histogram() +
-   facet_grid(Gender ~ .)
-
-ggplot(data = icu_patients_df1, aes(x = Height, fill = Gender)) + geom_histogram() +
-   facet_grid(Gender ~ .) +
-   scale_x_continuous(limits = c(100, 300))
-
+# SOFA summary and plot
+summary(icu_patients_df1$SOFA)
+ggplot(data = icu_patients_df1, aes(x = SOFA)) + geom_histogram(fill = "cornflowerblue") 
+  
+# SAPS1 summary and plot
+summary(icu_patients_df1$SAPS1)
+ggplot(data = icu_patients_df1, aes(x = SAPS1)) + geom_histogram(fill = "salmon1") 
 ```
 
 
