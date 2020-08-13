@@ -177,6 +177,52 @@ In this task, you are required to develop a logistic regression model using the 
 #####
 **Create your response to this task here, as a mixture of embedded (`knitr`) R code and any resulting outputs, and explanatory or commentary text.** 
 
+Regarding which variables to include in the model selection process we decided to first include basic patient descriptor variables: age, gender, and height as it is a good idea to inspect these regardless of the sort of analysis. Furthermore, the type of ICU and length of stay were also included, as were both the SAPS-I score and the SOFA score. The clinical variables are risk assessment measures, ergo they are an obvious choice to include for further inspection. Finally, we included ______ based on their clinical relevance. 
+
+# Exploratory Data Analysis
+```{r}
+# Libraries
+library(dplyr)
+library(ggplot2)
+```
+
+```{r}
+# Reading in the data sets
+icu_patients_df0 <- readRDS("icu_patients_df0.rds")
+icu_patients_df1 <- readRDS("icu_patients_df1.rds")
+```
+
+```{r}
+# EDA for the patient descriptor variables
+
+# -------------------- General summary statistics by variable ----------------#
+summary(icu_patients_df1$Age)
+summary(icu_patients_df1$Height)
+table(icu_patients_df1$Gender)
+
+# ----------------------  Age by gender ------------------------------------- #
+# Plot
+ggplot(data = icu_patients_df1, aes(x = Age, fill = Gender)) + geom_histogram() +
+   facet_grid(Gender ~ .)
+
+# Summary Statistics
+group_by(icu_patients_df1, Gender) %>% summarize(mean_age = mean(Age))
+
+
+# ----------------------- Height by gender -------------------------------------#
+# Plot
+# We see that there are some very tall women (400+) and some obs near 0, so the second plot
+  # restricts the axes to where the bulk of the observations are
+ggplot(data = icu_patients_df1, aes(x = Height, fill = Gender)) + geom_histogram() +
+   facet_grid(Gender ~ .)
+
+ggplot(data = icu_patients_df1, aes(x = Height, fill = Gender)) + geom_histogram() +
+   facet_grid(Gender ~ .) +
+   scale_x_continuous(limits = c(100, 300))
+
+```
+
+
 
 
 # Task 2 (15 marks)
