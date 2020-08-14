@@ -177,7 +177,7 @@ In this task, you are required to develop a logistic regression model using the 
 #####
 **Create your response to this task here, as a mixture of embedded (`knitr`) R code and any resulting outputs, and explanatory or commentary text.** 
 
-Regarding which variables to include in the model selection process we decided to first include basic patient descriptor variables: age, gender, and height as it is a good idea to inspect these regardless of the sort of analysis. Furthermore, the type of ICU and length of stay were also included, as were both the SAPS-I score and the SOFA score. The clinical variables are risk assessment measures, ergo they are an obvious choice to include for further inspection. Finally, we included ______ based on their clinical relevance. 
+Regarding which variables to include in the model selection process we decided to first include the basic patient descriptor variables age and gender as it is a good idea to inspect these regardless of the sort of analysis. Furthermore, the type of ICU and length of stay were also included, as were both the SAPS-I score and the SOFA score. We hypothesized the ICU type may be an indicator of the severity of the patient's condition, and thus a reasonable predictor of mortality. The clinical variables are risk assessment measures, ergo they are an obvious choice to include for further inspection. Finally, we included the minimum white blood cell count, ____, ___,  based on their clinical relevance. A low white blood cell count is indicative of a weak immune system, a person with no white blood cells is incapable of fighting infection, and thus is more likely to die from a variety of contitions than someone with a sufficient amount of white blood cells. 
 
 # Exploratory Data Analysis
 ```{r}
@@ -191,6 +191,10 @@ library(ggplot2)
 icu_patients_df0 <- readRDS("icu_patients_df0.rds")
 icu_patients_df1 <- readRDS("icu_patients_df1.rds")
 ```
+
+
+
+From the EDA below for patient descriptor variables it can be observed that the oldest patient in the data set was 90, the youngest 16, with the median age being 67. On average, the women admitted to the ICU were slightly older than the men, 65.5 years old compared to 63.5. However, by frequency there were more male patients (1148) than female patients (913). 
 
 ```{r}
 # EDA for the patient descriptor variables
@@ -208,6 +212,9 @@ ggplot(data = icu_patients_df1, aes(x = Age, fill = Gender)) + geom_histogram() 
 group_by(icu_patients_df1, Gender) %>% summarize(mean_age = mean(Age))
 
 ```
+The clinical variables are SOFA and SAPS-I scores. SOFA stands for sequential organ failure assessment. It is a mortality prediction score based on the degree of dysfunction of six organ systems. The SAPS-I score is another mortality risk prediction measure that is calculated from 14 routine physiological measurements.  
+
+
 ```{r}
 # EDA for clinical variables
 
@@ -220,6 +227,23 @@ summary(icu_patients_df1$SAPS1)
 ggplot(data = icu_patients_df1, aes(x = SAPS1)) + geom_histogram(fill = "salmon1") 
 ```
 ```{r}
+# EDA for other variables
+
+# White blood cell (minimum) count
+summary(icu_patients_df1$WBC_min)
+ggplot(data = icu_patients_df1, aes(x = WBC_min)) + geom_histogram(fill = "green4") 
+
+# WBC mean count
+summary(icu_patients_df1$WBC_diff)
+ggplot(data = icu_patients_df1, aes(x = WBC_diff)) + geom_histogram(fill = "purple1") 
+
+```
+
+
+
+
+
+```{r}
 # Fitting univariate models for the predictors chosen so far
 
 # Univariate fits
@@ -227,12 +251,16 @@ age_uni_fit <- glm(in_hospital_death ~ Age, family  = "binomial", data = icu_pat
 gender_uni_fit <- glm(in_hospital_death ~ Gender, family = "binomial", data = icu_patients_df1)
 SAPS_uni_fit <- glm(in_hospital_death ~ SAPS1, family = "binomial", data = icu_patients_df1)
 SOFA_uni_fit <- glm(in_hospital_death ~ SOFA, family = "binomial", data = icu_patients_df1)
+WBCmin_uni_fit <- glm(in_hospital_death ~ WBC_min, family = "binomial", data = icu_patients_df1)
+WBCdiff_uni_fit <- glm(in_hospital_death ~ WBC_diff, family = "binomial", data = icu_patients_df1)
 
 # Summaries
 summary(age_uni_fit) # significant
 summary(gender_uni_fit) # non significant
-summary(SAPS_uni_fit) # significant
+summary(SAPS_uni_fit) # significant, note SAPS AIC is better than SOFAs, should probably include both
 summary(SOFA_uni_fit) # significant
+summary(WBCmin_uni_fit) # significant
+summary(WBCdiff_uni_fit) # significant, ONLY CHOOSE WBC_MIN OR WBC_DIFF TO AVOID MULTICOLLINEARITY
 ```
 
 
