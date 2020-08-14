@@ -184,6 +184,7 @@ Regarding which variables to include in the model selection process we decided t
 # Libraries
 library(dplyr)
 library(ggplot2)
+library(arm)
 ```
 
 ```{r}
@@ -263,7 +264,34 @@ summary(WBCmin_uni_fit) # significant
 summary(WBCdiff_uni_fit) # significant, ONLY CHOOSE WBC_MIN OR WBC_DIFF TO AVOID MULTICOLLINEARITY
 ```
 
+```{r}
+# Skeleton code for picking the next few models
 
+# Candidate models from above variables
+cand_1_fit <- glm(in_hospital_death ~ ., family = "binomial", data = icu_patients_df1)
+cand_2_fit <- glm(in_hospital_death ~ ., family = "binomial", data = icu_patients_df1)
+cand_3_fit <- glm(in_hospital_death ~ ., family = "binomial", data = icu_patients_df1)
+
+# Summaries
+summary(cand_1_fit)
+summary(cand_2_fit)
+summary(cand_3_fit)
+```
+
+```{r}
+# Skeleton code for diagnostics of the candidate models 
+
+# Residual checks
+binnedplot(predict(cand_1_fit), residuals(cand_1_fit))
+binnedplot(predict(cand_2_fit), residuals(cand_2_fit))
+binnedplot(predict(cand_3_fit), residuals(cand_3_fit))
+
+# Outlier checks
+halfnorm(hatvalues(cand_1_fit))
+halfnorm(hatvalues(cand_2_fit))
+halfnorm(hatvalues(cand_3_fit))
+
+```
 
 
 # Task 2 (15 marks)
