@@ -317,9 +317,26 @@ In this task, you are required to develop a Cox proportional hazards survival mo
 
 ####
 **Create your response to this task here, as a mixture of embedded (`knitr`) R code and any resulting outputs, and explanatory or commentary text.** 
+```{r}
+# basic EDA in task2
 
+# look at the first few lines of icu patients df1
+head(icu_patients_df1)
 
+# table the in hospital
+table(icu_patients_df1$in_hospital_death)
 
+# summary the number of days
+summary(icu_patients_df1$Days)
+hist(icu_patients_df1$Days)
+
+# table the status
+table(icu_patients_df1$Status)
+
+# hist survival
+survival_year <- icu_patients_df1$Survival / 365
+hist(survival_year)
+```
 ## Save, knit and submit
 
 **Reminder**: don't forget to save this file, to knit it to check that everything works, and then submit via the drop box in OpenLearning.
