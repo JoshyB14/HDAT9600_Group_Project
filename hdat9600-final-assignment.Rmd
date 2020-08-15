@@ -320,22 +320,39 @@ In this task, you are required to develop a Cox proportional hazards survival mo
 ```{r}
 # basic EDA in task2
 
-# look at the first few lines of icu patients df1
+# load the survival library
+library(survival)
+# read the dataset
 head(icu_patients_df1)
-
-# table the in hospital
-table(icu_patients_df1$in_hospital_death)
+nrow(icu_patients_df1)
+# Note: status = TRUE = event occurred, status = FALSE = no event 
 
 # summary the number of days
 summary(icu_patients_df1$Days)
 hist(icu_patients_df1$Days)
 
-# table the status
+# check the status
 table(icu_patients_df1$Status)
+
+# check age and gender
+summary(icu_patients_df1$Age)
+table(icu_patients_df1$Gender)
 
 # hist survival
 survival_year <- icu_patients_df1$Survival / 365
 hist(survival_year)
+
+# fit the KM (survival) model for data
+km.model <- survfit( Surv(Days, Status) ~ 1, type="kaplan-meier", data=icu_patients_df1)
+plot(km.model, xlim = c(1,2500), main="kaplan-meier survical curve", xlab = "Time(days)",
+     ylab = " % Alive = S(t)")
+abline(h=0.5,col="red")
+
+# fit the KM (survival) model by gender
+km.model_gender <- survfit( Surv(Days, Status) ~ Gender, type="kaplan-meier", data=icu_patients_df1)
+plot(km.model_gender, main="kaplan-meier survical curve", xlab = "Time(days)",ylab = " % Alive = S(t)", col=c("red","blue"))
+
+
 ```
 ## Save, knit and submit
 
