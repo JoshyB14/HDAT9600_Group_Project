@@ -177,13 +177,17 @@ In this task, you are required to develop a logistic regression model using the 
 #####
 **Create your response to this task here, as a mixture of embedded (`knitr`) R code and any resulting outputs, and explanatory or commentary text.** 
 
-Regarding which variables to include in the model selection process we decided to first include the basic patient descriptor variables age and gender as it is a good idea to inspect these regardless of the sort of analysis. Furthermore, the type of ICU and length of stay were also included, as were both the SAPS-I score and the SOFA score. We hypothesized the ICU type may be an indicator of the severity of the patient's condition, and thus a reasonable predictor of mortality. The clinical variables are risk assessment measures, ergo they are an obvious choice to include for further inspection. Finally, we included the minimum white blood cell count, ____, ___,  based on their clinical relevance. A low white blood cell count is indicative of a weak immune system, a person with no white blood cells is incapable of fighting infection, and thus is more likely to die from a variety of contitions than someone with a sufficient amount of white blood cells. 
+   Regarding which variables to include in the model selection process we decided to first include the basic patient descriptor variables age and gender, as it is a good idea to inspect these regardless of the sort of their suspected significance. Furthermore, the type of ICU and length of stay were also included, as were both the SAPS-I score and the SOFA score. We hypothesized the ICU type may be an indicator of the severity of the patient's condition, and thus a reasonable predictor of mortality. The SOFA AND SAPS-I scores are risk assessment measures, ergo they are an obvious choice to include for further inspection. 
+
+   We also included the minimum white blood cell count. A low white blood cell count is indicative of a weak immune system, a person with no white blood cells is incapable of fighting infection, and thus is more likely to die from a variety of conditions than someone with a sufficient amount of white blood cells. The maximum creatine level was included as this is a common measure of renal function. Fi02 was chosen as a candidate variable over Pa02 because you can titrate Fi02 to correct low Pa02 until later stages of disease. Maximum lactate was examined as it is often elevated in states of hypoperfusion. Extremes at the high and low ends of the pH scale often warrant a poor prognosis, thus both considered. Tropinon, a cardiac enzyme, is elevated in myocardial ischaemia. Finally, temperature and glucose levels, both at a maximum and minimum, were explored. 
 
 # Exploratory Data Analysis
 ```{r}
 # Libraries
 library(dplyr)
 library(ggplot2)
+library(DescTools)
+library(faraway)
 library(arm)
 ```
 
@@ -195,7 +199,7 @@ icu_patients_df1 <- readRDS("icu_patients_df1.rds")
 
 
 
-From the EDA below for patient descriptor variables it can be observed that the oldest patient in the data set was 90, the youngest 16, with the median age being 67. On average, the women admitted to the ICU were slightly older than the men, 65.5 years old compared to 63.5. However, by frequency there were more male patients (1148) than female patients (913). 
+   From the EDA below for patient descriptor variables it can be observed that the oldest patient in the data set was 90, the youngest 16, with the median age being 67. On average, the women admitted to the ICU were slightly older than the men, 65.5 years old compared to 63.5. However, by frequency there were more male patients (1148) than female patients (913). 
 
 ```{r}
 # EDA for the patient descriptor variables
@@ -207,13 +211,13 @@ table(icu_patients_df1$Gender)
 # ----------------------  Age by gender ------------------------------------- #
 # Plot
 ggplot(data = icu_patients_df1, aes(x = Age, fill = Gender)) + geom_histogram() +
-   facet_grid(Gender ~ .)
+   facet_grid(Gender ~ .) + ggtitle("Distribution of age by gender")
 
 # Summary Statistics
 group_by(icu_patients_df1, Gender) %>% summarize(mean_age = mean(Age))
 
 ```
-The clinical variables are SOFA and SAPS-I scores. SOFA stands for sequential organ failure assessment. It is a mortality prediction score based on the degree of dysfunction of six organ systems. The SAPS-I score is another mortality risk prediction measure that is calculated from 14 routine physiological measurements.  
+   The clinical variables are SOFA and SAPS-I scores. SOFA stands for sequential organ failure assessment. It is a mortality prediction score based on the degree of dysfunction of six organ systems. The SAPS-I score is another mortality risk prediction measure that is calculated from 14 routine physiological measurements. Note that in the histograms below the vertical red line indicates the mean of the plotted measurement. 
 
 
 ```{r}
@@ -221,77 +225,208 @@ The clinical variables are SOFA and SAPS-I scores. SOFA stands for sequential or
 
 # SOFA summary and plot
 summary(icu_patients_df1$SOFA)
-ggplot(data = icu_patients_df1, aes(x = SOFA)) + geom_histogram(fill = "cornflowerblue") 
+ggplot(data = icu_patients_df1, aes(x = SOFA)) + geom_histogram(fill = "cornflowerblue") + 
+   geom_vline(xintercept = mean(icu_patients_df1$SOFA), col = "red") +
+   ggtitle("Distribution of SOFA scores")
   
 # SAPS1 summary and plot
 summary(icu_patients_df1$SAPS1)
-ggplot(data = icu_patients_df1, aes(x = SAPS1)) + geom_histogram(fill = "salmon1") 
+ggplot(data = icu_patients_df1, aes(x = SAPS1)) + geom_histogram(fill = "cornflowerblue") +
+   geom_vline(xintercept = mean(na.exclude(icu_patients_df1$SAPS1)), col = "red") +
+   ggtitle("Distribution of SAPS1 scores")
 ```
+   Brief EDA for the remaining clinical variables is presented below. Similarly to the above plots, the vertical line represents the mean for that particular measure. The distributions vary in shape, but structurally everything appears to be in order with the data entry of the measurements. 
+
 ```{r}
 # EDA for other variables
 
+# ICU type
+table(icu_patients_df1$ICUType)
+
 # White blood cell (minimum) count
 summary(icu_patients_df1$WBC_min)
-ggplot(data = icu_patients_df1, aes(x = WBC_min)) + geom_histogram(fill = "green4") 
+ggplot(data = icu_patients_df1, aes(x = WBC_min)) + geom_histogram(fill = "salmon1") +
+   geom_vline(xintercept = mean(icu_patients_df1$WBC_min), col = "cornflowerblue") +
+   ggtitle("Distribution of minimum white blooc cell counts")
 
-# WBC mean count
+# WBC diff count
 summary(icu_patients_df1$WBC_diff)
-ggplot(data = icu_patients_df1, aes(x = WBC_diff)) + geom_histogram(fill = "purple1") 
+ggplot(data = icu_patients_df1, aes(x = WBC_diff)) + geom_histogram(fill = "salmon1") +
+   geom_vline(xintercept = mean(icu_patients_df1$WBC_diff), col = "cornflowerblue") +
+   ggtitle("Distribution of white blood cell count differences between mean and most extreme value")
+
+# Creatine (max)
+summary(icu_patients_df1$Creatinine_max)
+ggplot(data = icu_patients_df1, aes(x = Creatinine_max)) + geom_histogram(fill = "salmon1") +
+   geom_vline(xintercept = mean(icu_patients_df1$Creatinine_max), col = "cornflowerblue") +
+   ggtitle("Distribution of maximum creatinine measurements")
+
+# albumin (min)
+summary(icu_patients_df1$Albumin_min)
+ggplot(data = icu_patients_df1, aes(x = Albumin_min)) + geom_histogram(fill = "salmon1") +
+   geom_vline(xintercept = mean(icu_patients_df1$Albumin_min), col = "cornflowerblue") +
+   ggtitle("Distribution of minimum albumin measurements")
+
+# Fi02
+summary(icu_patients_df1$FiO2_max)
+ggplot(data = icu_patients_df1, aes(x = FiO2_max)) + geom_histogram(fill = "salmon1") +
+   geom_vline(xintercept = mean(icu_patients_df1$FiO2_max), col = "cornflowerblue") +
+   ggtitle("Distribution of maximum FiO2 measurements")
+
+# lactate (max)
+summary(icu_patients_df1$Lactate_max)
+ggplot(data = icu_patients_df1, aes(x = Lactate_max)) + geom_histogram(fill = "salmon1") +
+   geom_vline(xintercept = mean(icu_patients_df1$Lactate_max), col = "cornflowerblue") +
+   ggtitle("Distribution of maximum lactate measurements")
+
+# pH (max and min)
+summary(icu_patients_df1$pH_max)
+ggplot(data = icu_patients_df1, aes(x = pH_max)) + geom_histogram(fill = "salmon1") +
+   geom_vline(xintercept = mean(icu_patients_df1$pH_max), col = "cornflowerblue") +
+   ggtitle("Distribution of maximum pH measurements")
+
+summary(icu_patients_df1$pH_min)
+ggplot(data = icu_patients_df1, aes(x = pH_min)) + geom_histogram(fill = "salmon1") +
+   geom_vline(xintercept = mean(icu_patients_df1$pH_min), col = "cornflowerblue") +
+   ggtitle("Distribution of minimum pH measurements")
+
+# Temperature(max and min)
+summary(icu_patients_df1$Temp_max)
+ggplot(data = icu_patients_df1, aes(x = Temp_max)) + geom_histogram(fill = "salmon1") +
+   geom_vline(xintercept = mean(icu_patients_df1$Temp_max), col = "cornflowerblue") +
+   ggtitle("Distribution of maximum temperature measurements")
+
+summary(icu_patients_df1$Temp_min)
+ggplot(data = icu_patients_df1, aes(x = Temp_min)) + geom_histogram(fill = "salmon1") +
+   geom_vline(xintercept = mean(icu_patients_df1$Temp_min), col = "cornflowerblue") +
+   ggtitle("Distribution of minimum temperature measurements")
+
+# MAP (min and max)
+summary(icu_patients_df1$MAP_max)
+ggplot(data = icu_patients_df1, aes(x = MAP_max)) + geom_histogram(fill = "salmon1") +
+   geom_vline(xintercept = mean(icu_patients_df1$MAP_max), col = "cornflowerblue") +
+   ggtitle("Distribution of maximum MAP measurements")
+
+summary(icu_patients_df1$MAP_min)
+ggplot(data = icu_patients_df1, aes(x = MAP_min)) + geom_histogram(fill = "salmon1") +
+   geom_vline(xintercept = mean(icu_patients_df1$MAP_min), col = "cornflowerblue") +
+   ggtitle("Distribution of minimum MAP measurements")
+
+# Glusoce (max and min)
+summary(icu_patients_df1$Glucose_max)
+ggplot(data = icu_patients_df1, aes(x = Glucose_max)) + geom_histogram(fill = "salmon1") +
+   geom_vline(xintercept = mean(icu_patients_df1$Glucose_max), col = "cornflowerblue") +
+   ggtitle("Distribution of maximum glusoce measurements")
+
+summary(icu_patients_df1$Glucose_min)
+ggplot(data = icu_patients_df1, aes(x = Glucose_min)) + geom_histogram(fill = "salmon1") +
+   geom_vline(xintercept = mean(icu_patients_df1$Glucose_min), col = "cornflowerblue") +
+   ggtitle("Distribution of minimum glusoce measurements")
 
 ```
 
 
-
+   Next, we fit each candidate variable as a univariate predictor of in hospital mortality. Out of the patient descriptor variables age was found to be significant while gender was not. Both clinical risk predictions scores were found to be significant, as was ICU type. Among the additional clinical measures we chose as candidate variables only FiO2 (max), pH (max), temperature (max), MAP (max and min), and glucose (min) were found to not be significant. 
 
 
 ```{r}
 # Fitting univariate models for the predictors chosen so far
 
 # Univariate fits
-age_uni_fit <- glm(in_hospital_death ~ Age, family  = "binomial", data = icu_patients_df1)
-gender_uni_fit <- glm(in_hospital_death ~ Gender, family = "binomial", data = icu_patients_df1)
-SAPS_uni_fit <- glm(in_hospital_death ~ SAPS1, family = "binomial", data = icu_patients_df1)
-SOFA_uni_fit <- glm(in_hospital_death ~ SOFA, family = "binomial", data = icu_patients_df1)
-WBCmin_uni_fit <- glm(in_hospital_death ~ WBC_min, family = "binomial", data = icu_patients_df1)
-WBCdiff_uni_fit <- glm(in_hospital_death ~ WBC_diff, family = "binomial", data = icu_patients_df1)
+age_fit        <- glm(in_hospital_death ~ Age, family  = "binomial", data = icu_patients_df1)
+gender_fit     <- glm(in_hospital_death ~ Gender, family = "binomial", data = icu_patients_df1)
+SAPS_fit       <- glm(in_hospital_death ~ SAPS1, family = "binomial", data = icu_patients_df1)
+SOFA_fit       <- glm(in_hospital_death ~ SOFA, family = "binomial", data = icu_patients_df1)
+WBCmin_fit     <- glm(in_hospital_death ~ WBC_min, family = "binomial", data = icu_patients_df1)
+WBCdiff_fit    <- glm(in_hospital_death ~ WBC_diff, family = "binomial", data = icu_patients_df1)
+creatine_fit   <- glm(in_hospital_death ~ Creatinine_max, family = "binomial", data = icu_patients_df1)
+albumin_fit    <- glm(in_hospital_death ~ Albumin_min, family = "binomial", data = icu_patients_df1)
+fio2_fit       <- glm(in_hospital_death ~ FiO2_max, family = "binomial", data = icu_patients_df1)
+lactate_fit    <- glm(in_hospital_death ~ Lactate_max, family = "binomial", data = icu_patients_df1)
+pHmax_fit      <- glm(in_hospital_death ~ pH_max, family = "binomial", data = icu_patients_df1)
+pHmin_fit      <- glm(in_hospital_death ~ pH_min, family = "binomial", data = icu_patients_df1)
+tempmax_fit    <- glm(in_hospital_death ~ Temp_max, family = "binomial", data = icu_patients_df1)
+tempmin_fit    <- glm(in_hospital_death ~ Temp_min, family = "binomial", data = icu_patients_df1)
+mapmax_fit     <- glm(in_hospital_death ~ MAP_max, family = "binomial", data = icu_patients_df1)
+mapmin_fit     <- glm(in_hospital_death ~ MAP_min, family = "binomial", data = icu_patients_df1)
+glucosemax_fit <- glm(in_hospital_death ~ Glucose_max, family = "binomial", data = icu_patients_df1)
+glucosemin_fit <- glm(in_hospital_death ~ Glucose_min, family = "binomial", data = icu_patients_df1)
+ICUtype_fit    <- glm(in_hospital_death ~ ICUType, family = "binomial", data = icu_patients_df1)
 
 # Summaries
-summary(age_uni_fit) # significant
-summary(gender_uni_fit) # non significant
-summary(SAPS_uni_fit) # significant, note SAPS AIC is better than SOFAs, should probably include both
-summary(SOFA_uni_fit) # significant
-summary(WBCmin_uni_fit) # significant
-summary(WBCdiff_uni_fit) # significant, ONLY CHOOSE WBC_MIN OR WBC_DIFF TO AVOID MULTICOLLINEARITY
+summary(age_fit)        # significant, AIC = 1648.9
+summary(gender_fit)     # non significant
+summary(SAPS_fit)       # significant, AIC = 1534.8
+summary(SOFA_fit)       # significant, AIC = 1611.5
+summary(WBCmin_fit)     # significant, AIC = 1699.6
+summary(WBCdiff_fit)    # significant, AIC = 1694.7 ,ONLY CHOOSE WBC_MIN OR WBC_DIFF TO AVOID MULTICOLLINEARITY
+summary(creatine_fit)   # significant, AIC = 1678.4
+summary(albumin_fit)    # significant, AIC = 1680
+summary(fio2_fit)       # not significant
+summary(lactate_fit)    # significant, AIC = 1673.5
+summary(pHmax_fit)      # not significant
+summary(pHmin_fit)      # significant, AIC = 1681.4
+summary(tempmax_fit)    # not significant
+summary(tempmin_fit)    # significant, AIC = 1688.3
+summary(mapmax_fit)     # not significant, AIC = 1703.7
+summary(mapmin_fit)     # not significant
+summary(glucosemax_fit) # significant, AIC = 1688.2
+summary(glucosemin_fit) # not significant 
+summary(ICUtype_fit) # significant, AIC = 1663.3
 ```
+
+   From the univariate fits we chose to further examine a number of models. The first of which contained all predictors significant in the univariate analyses, as well as gender. From there, given that all candidate variables have been deemed either statistically and/or clinically significant, we employed backwards elimination to minimize AIC and find the optimal model. Judging by AIC, BIC, and other metric provided by the *PseudoR2* function it can be observed that the model fit using backwards elimination is preferable. Thus, our final model included the predictors: age, SAPS1, SOFA, maximum lactate measurement, as well as ICU type. While this model may seem rather simple, it should be noted that the SOFA and SAPS1 scores are derived from many of the clinical measurements in the data set and thus their importance is captured in the background. 
 
 ```{r}
 # Skeleton code for picking the next few models
 
 # Candidate models from above variables
-cand_1_fit <- glm(in_hospital_death ~ ., family = "binomial", data = icu_patients_df1)
-cand_2_fit <- glm(in_hospital_death ~ ., family = "binomial", data = icu_patients_df1)
-cand_3_fit <- glm(in_hospital_death ~ ., family = "binomial", data = icu_patients_df1)
+cand_1_fit <- glm(in_hospital_death ~ Age + Gender + SAPS1 + SOFA + WBC_diff + Creatinine_max + Albumin_min + Lactate_max + 
+                     pH_min + Temp_min + Glucose_max + ICUType, family = "binomial", data = icu_patients_df1)
+
+cand_backelim_fit <- step(cand_1_fit, direction = "back")
 
 # Summaries
 summary(cand_1_fit)
-summary(cand_2_fit)
-summary(cand_3_fit)
+summary(cand_backelim_fit)
+
+# Comparing the two
+PseudoR2(cand_1_fit, which = "all")
+PseudoR2(cand_backelim_fit, which = "all")
+
 ```
+
+When diagnosing the quality of the model we first examined the binned residuals plot. Initially, slight alarm was raised over the residuals on the leftmost side of the bottom half of the plot. However, the residuals seem to broadly be acceptable. The halfnorm plot indicated two values of concern. Upon further investigation these patients had normal measurements for the variables used in our final model. Given the large size of the data these two patients should not be of much concern. 
 
 ```{r}
-# Skeleton code for diagnostics of the candidate models 
+# Renaming final model
+final_model <- cand_backelim_fit
 
 # Residual checks
-binnedplot(predict(cand_1_fit), residuals(cand_1_fit))
-binnedplot(predict(cand_2_fit), residuals(cand_2_fit))
-binnedplot(predict(cand_3_fit), residuals(cand_3_fit))
+binnedplot(predict(final_model), residuals(final_model))
 
 # Outlier checks
-halfnorm(hatvalues(cand_1_fit))
-halfnorm(hatvalues(cand_2_fit))
-halfnorm(hatvalues(cand_3_fit))
+halfnorm(hatvalues(final_model))
+# Inspecting suspect values
+icu_patients_df1[hatvalues(final_model) > 0.04, c("in_hospital_death", "Age", "ICUType", "SOFA", "SAPS1")]
 
 ```
+When interpreting the model it is best to default to the odds, thus, we first exponentiated the repression coefficients. The interpretation of such odds are as follows: the odds of dying in the ICU are 2.9% greater for every 1 year increase in age, 7.4% greater for every unit increase in SAPS1 score, 10.3% higher for every unit increase in SOFA score, 5.6% greater for every unit increase in maximum lactate measurement, 80.5% lower if you are in the surgical recovery unit compared to baseline (coronary care unit), 22.2% higher if you are in the medical ICU compared to baseline, and about 10% lower if you are in the surgical ICU compared to baseline.   
+
+```{r}
+final_coef <- coef(final_model)
+exp(final_coef)
+```
+
+After fitting the model the the unimputed data set we can see that the AIC is actually much lower, and more variables are significant at the 0.05 level. 
+
+```{r}
+# Fitting final model to second ICU data set
+final_model_newdata <- glm(in_hospital_death ~ Age + SAPS1 + SOFA + Lactate_max + ICUType, data = icu_patients_df0)
+summary(final_model_newdata)
+
+```
+
 
 
 # Task 2 (15 marks)
