@@ -490,95 +490,6 @@ hist(survival_year)
 
 ```
 
-```{r}
-# fitting a simple Cox model with gender using coxph
-cox.gender <- coxph( Surv(Days, Status) ~ Gender, data=icu_patients_df1)
-summary(cox.gender)
-
-# fitting a simple Cox model with ICUType using coxph 
-cox.ICUType <- coxph( Surv(Days, Status) ~ ICUType, data=icu_patients_df1)
-summary(cox.ICUType)  # significant
-
-# fitting a simple Cox model with Age using coxph 
-cox.Age <- coxph( Surv(Days, Status) ~ Age, data=icu_patients_df1)
-summary(cox.Age)  # significant
-
-# fitting a simple Cox model with WBC_max using coxph
-cox.WBC_max <- coxph( Surv(Days, Status) ~ WBC_max, data=icu_patients_df1)
-summary(cox.WBC_max)
-
-# fitting a simple Cox model with WBC_diff using coxph
-cox.WBC_diff <- coxph( Surv(Days, Status) ~ WBC_diff, data=icu_patients_df1)
-summary(cox.WBC_diff)  # significant
-
-# fitting a simple Cox model with SaO2_max using coxph
-cox.SaO2_max <- coxph( Surv(Days, Status) ~ SaO2_max, data=icu_patients_df1)
-summary(cox.SaO2_max)
-
-# fitting a simple Cox model with SaO2_diff using coxph
-cox.SaO2_diff <- coxph( Surv(Days, Status) ~ SaO2_diff, data=icu_patients_df1)
-summary(cox.SaO2_diff)
-
-# fitting a simple Cox model with MAP_max using coxph
-cox.MAP_max <- coxph( Surv(Days, Status) ~ MAP_max, data=icu_patients_df1)
-summary(cox.MAP_max)
-
-# fitting a simple Cox model with MAP_diff using coxph
-cox.MAP_diff <- coxph( Surv(Days, Status) ~ MAP_diff, data=icu_patients_df1)
-summary(cox.MAP_diff)  # significant
-
-# fitting a simple Cox model with Glucose_max using coxph
-cox.Glucose_max <- coxph( Surv(Days, Status) ~ Glucose_max, data=icu_patients_df1)
-summary(cox.Glucose_max) # significant
-
-# fitting a simple Cox model with Glucose_diff using coxph
-cox.Glucose_diff <- coxph( Surv(Days, Status) ~ Glucose_diff, data=icu_patients_df1)
-summary(cox.Glucose_diff) # significant
-
-# fitting a simple Cox model with Albumin_max using coxph
-cox.Albumin_max <- coxph( Surv(Days, Status) ~ Albumin_max, data=icu_patients_df1)
-summary(cox.Albumin_max) # significant
-
-# fitting a simple Cox model with Albumin_diff using coxph
-cox.Albumin_diff <- coxph( Surv(Days, Status) ~ Albumin_diff, data=icu_patients_df1)
-summary(cox.Albumin_diff)
-
-# fitting a simple Cox model with Cholesterol_max using coxph
-cox.Cholesterol_max <- coxph( Surv(Days, Status) ~ Cholesterol_max, data=icu_patients_df1)
-summary(cox.Cholesterol_max) # significant
-
-# fitting a simple Cox model with Cholesterol_diff using coxph
-cox.Cholesterol_diff <- coxph( Surv(Days, Status) ~ Cholesterol_diff, data=icu_patients_df1)
-summary(cox.Cholesterol_diff) # significant
-
-# fitting a simple Cox model with SAPS1 using coxph
-cox.SAPS1 <- coxph( Surv(Days, Status) ~ SAPS1, data=icu_patients_df1)
-summary(cox.SAPS1) # significant
-
-# fitting a simple Cox model with SOFA using coxph
-cox.SOFA <- coxph( Surv(Days, Status) ~ SOFA, data=icu_patients_df1)
-summary(cox.SOFA) # significant
-
-# fitting a simple Cox model with Creatinine_max using coxph
-cox.Creatinine_max <- coxph( Surv(Days, Status) ~ Creatinine_max, data=icu_patients_df1)
-summary(cox.Creatinine_max) # significant
-
-# fitting a simple Cox model with Creatinine_diff using coxph
-cox.Creatinine_diff <- coxph( Surv(Days, Status) ~ Creatinine_diff, data=icu_patients_df1)
-summary(cox.Creatinine_diff) # significant
-
-# fitting a simple Cox model with Troponin_max using coxph
-cox.TroponinI_max <- coxph( Surv(Days, Status) ~ TroponinI_max, data=icu_patients_df1)
-summary(cox.TroponinI_max)
-
-# fitting a simple Cox model with Troponin_diff using coxph
-cox.TroponinI_diff <- coxph( Surv(Days, Status) ~ TroponinI_diff, data=icu_patients_df1)
-summary(cox.TroponinI_diff)
-
-
-
-
-```
 
 ```{r}
 # just some intial EDA on some target variables as mentioned on the Task 2 issue forum on Github...
@@ -727,9 +638,92 @@ ggplot(icu_patients_df1, aes(TroponinI_min)) + geom_histogram(fill = "red") +
 ```
 
 
+```{r}
+# fitting a simple Cox model with gender using coxph
+cox.gender <- coxph( Surv(Days, Status) ~ Gender, data=icu_patients_df1)
+summary(cox.gender)
 
+# fitting a simple Cox model with ICUType using coxph 
+cox.ICUType <- coxph( Surv(Days, Status) ~ ICUType, data=icu_patients_df1)
+summary(cox.ICUType)  # significant
 
+# fitting a simple Cox model with Age using coxph 
+cox.Age <- coxph( Surv(Days, Status) ~ Age, data=icu_patients_df1)
+summary(cox.Age)  # significant
 
+# fitting a simple Cox model with WBC_max using coxph
+cox.WBC_max <- coxph( Surv(Days, Status) ~ WBC_max, data=icu_patients_df1)
+summary(cox.WBC_max)
+
+# fitting a simple Cox model with WBC_diff using coxph
+cox.WBC_diff <- coxph( Surv(Days, Status) ~ WBC_diff, data=icu_patients_df1)
+summary(cox.WBC_diff)  # significant
+
+# fitting a simple Cox model with SaO2_max using coxph
+cox.SaO2_max <- coxph( Surv(Days, Status) ~ SaO2_max, data=icu_patients_df1)
+summary(cox.SaO2_max)
+
+# fitting a simple Cox model with SaO2_diff using coxph
+cox.SaO2_diff <- coxph( Surv(Days, Status) ~ SaO2_diff, data=icu_patients_df1)
+summary(cox.SaO2_diff)
+
+# fitting a simple Cox model with MAP_max using coxph
+cox.MAP_max <- coxph( Surv(Days, Status) ~ MAP_max, data=icu_patients_df1)
+summary(cox.MAP_max)
+
+# fitting a simple Cox model with MAP_diff using coxph
+cox.MAP_diff <- coxph( Surv(Days, Status) ~ MAP_diff, data=icu_patients_df1)
+summary(cox.MAP_diff)  # significant
+
+# fitting a simple Cox model with Glucose_max using coxph
+cox.Glucose_max <- coxph( Surv(Days, Status) ~ Glucose_max, data=icu_patients_df1)
+summary(cox.Glucose_max) # significant
+
+# fitting a simple Cox model with Glucose_diff using coxph
+cox.Glucose_diff <- coxph( Surv(Days, Status) ~ Glucose_diff, data=icu_patients_df1)
+summary(cox.Glucose_diff) # significant
+
+# fitting a simple Cox model with Albumin_max using coxph
+cox.Albumin_max <- coxph( Surv(Days, Status) ~ Albumin_max, data=icu_patients_df1)
+summary(cox.Albumin_max) # significant
+
+# fitting a simple Cox model with Albumin_diff using coxph
+cox.Albumin_diff <- coxph( Surv(Days, Status) ~ Albumin_diff, data=icu_patients_df1)
+summary(cox.Albumin_diff)
+
+# fitting a simple Cox model with Cholesterol_max using coxph
+cox.Cholesterol_max <- coxph( Surv(Days, Status) ~ Cholesterol_max, data=icu_patients_df1)
+summary(cox.Cholesterol_max) # significant
+
+# fitting a simple Cox model with Cholesterol_diff using coxph
+cox.Cholesterol_diff <- coxph( Surv(Days, Status) ~ Cholesterol_diff, data=icu_patients_df1)
+summary(cox.Cholesterol_diff) # significant
+
+# fitting a simple Cox model with SAPS1 using coxph
+cox.SAPS1 <- coxph( Surv(Days, Status) ~ SAPS1, data=icu_patients_df1)
+summary(cox.SAPS1) # significant
+
+# fitting a simple Cox model with SOFA using coxph
+cox.SOFA <- coxph( Surv(Days, Status) ~ SOFA, data=icu_patients_df1)
+summary(cox.SOFA) # significant
+
+# fitting a simple Cox model with Creatinine_max using coxph
+cox.Creatinine_max <- coxph( Surv(Days, Status) ~ Creatinine_max, data=icu_patients_df1)
+summary(cox.Creatinine_max) # significant
+
+# fitting a simple Cox model with Creatinine_diff using coxph
+cox.Creatinine_diff <- coxph( Surv(Days, Status) ~ Creatinine_diff, data=icu_patients_df1)
+summary(cox.Creatinine_diff) # significant
+
+# fitting a simple Cox model with Troponin_max using coxph
+cox.TroponinI_max <- coxph( Surv(Days, Status) ~ TroponinI_max, data=icu_patients_df1)
+summary(cox.TroponinI_max)
+
+# fitting a simple Cox model with Troponin_diff using coxph
+cox.TroponinI_diff <- coxph( Surv(Days, Status) ~ TroponinI_diff, data=icu_patients_df1)
+summary(cox.TroponinI_diff)
+
+```
 
 ## Save, knit and submit
 
