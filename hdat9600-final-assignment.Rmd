@@ -597,33 +597,32 @@ summary(icu_patients_df1$Cholesterol_max)
 ggplot(data = icu_patients_df1, aes(x = Cholesterol_max)) + geom_histogram(fill = "red")+
 ggtitle("Cholesterol_max histogram")
 
-
-# Creatinine_diff
+# ----------------------------------------Creatinine_diff----------------------------#
 summary(icu_patients_df1$Creatinine_diff)
 ggplot(icu_patients_df1, aes(Creatinine_diff)) + geom_histogram(fill = "red") +
           ggtitle("Creatinine_diff histogram")
 
-# Creatinine_max
+# ----------------------------------------Creatinine_max----------------------------#
 summary(icu_patients_df1$Creatinine_max)
 ggplot(icu_patients_df1, aes(Creatinine_max)) + geom_histogram(fill = "red") +
           ggtitle("Creatinine_max histogram")
 
-# Creatinine_min
+# ----------------------------------------Creatinine_min----------------------------#
 summary(icu_patients_df1$Creatinine_min)
 ggplot(icu_patients_df1, aes(Creatinine_min)) + geom_histogram(fill = "red") +
           ggtitle("Creatinine_min histogram")
 
-# TroponinI_diff
+# ----------------------------------------Troponin_diff----------------------------#
 summary(icu_patients_df1$TroponinI_diff)
 ggplot(icu_patients_df1, aes(TroponinI_diff)) + geom_histogram(fill = "red") +
           ggtitle("TroponinI_diff histogram")
 
-# TroponinI_max
+# ----------------------------------------Troponin_max----------------------------#
 summary(icu_patients_df1$TroponinI_max)
 ggplot(icu_patients_df1, aes(TroponinI_max)) + geom_histogram(fill = "red") +
           ggtitle("TroponinI_max histogram")
 
-# TroponinI_min
+# ----------------------------------------Troponin_min----------------------------#
 summary(icu_patients_df1$TroponinI_min)
 ggplot(icu_patients_df1, aes(TroponinI_min)) + geom_histogram(fill = "red") +
           ggtitle("TroponinI_min histogram")
