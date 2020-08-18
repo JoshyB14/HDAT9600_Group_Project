@@ -482,22 +482,82 @@ table(icu_patients_df1$Status)
 
 # check age and gender
 summary(icu_patients_df1$Age)
-table(icu_patients_df1$Gender)
+summary(icu_patients_df1$Gender)
 
 # hist survival
 survival_year <- icu_patients_df1$Survival / 365
 hist(survival_year)
 
-# fit the KM (survival) model for data
-km.model <- survfit( Surv(Days, Status) ~ 1, type="kaplan-meier", data=icu_patients_df1)
-plot(km.model, xlim = c(1,2500), main="kaplan-meier survical curve", xlab = "Time(days)",
-     ylab = " % Alive = S(t)")
-abline(h=0.5,col="red")
+```
 
-# fit the KM (survival) model by gender
-km.model_gender <- survfit( Surv(Days, Status) ~ Gender, type="kaplan-meier", data=icu_patients_df1)
-plot(km.model_gender, main="kaplan-meier survical curve", xlab = "Time(days)",ylab = " % Alive = S(t)", col=c("red","blue"))
+```{r}
+# fitting a simple Cox model with gender using coxph
+cox.gender <- coxph( Surv(Days, Status) ~ Gender, data=icu_patients_df1)
+summary(cox.gender)
 
+# fitting a simple Cox model with ICUType using coxph 
+cox.ICUType <- coxph( Surv(Days, Status) ~ ICUType, data=icu_patients_df1)
+summary(cox.ICUType)  # significant
+
+# fitting a simple Cox model with Age using coxph 
+cox.Age <- coxph( Surv(Days, Status) ~ Age, data=icu_patients_df1)
+summary(cox.Age)  # significant
+
+# fitting a simple Cox model with WBC_max using coxph
+cox.WBC_max <- coxph( Surv(Days, Status) ~ WBC_max, data=icu_patients_df1)
+summary(cox.WBC_max)
+
+# fitting a simple Cox model with WBC_diff using coxph
+cox.WBC_diff <- coxph( Surv(Days, Status) ~ WBC_diff, data=icu_patients_df1)
+summary(cox.WBC_diff)  # significant
+
+# fitting a simple Cox model with SaO2_max using coxph
+cox.SaO2_max <- coxph( Surv(Days, Status) ~ SaO2_max, data=icu_patients_df1)
+summary(cox.SaO2_max)
+
+# fitting a simple Cox model with SaO2_diff using coxph
+cox.SaO2_diff <- coxph( Surv(Days, Status) ~ SaO2_diff, data=icu_patients_df1)
+summary(cox.SaO2_diff)
+
+# fitting a simple Cox model with MAP_max using coxph
+cox.MAP_max <- coxph( Surv(Days, Status) ~ MAP_max, data=icu_patients_df1)
+summary(cox.MAP_max)
+
+# fitting a simple Cox model with MAP_diff using coxph
+cox.MAP_diff <- coxph( Surv(Days, Status) ~ MAP_diff, data=icu_patients_df1)
+summary(cox.MAP_diff)  # significant
+
+# fitting a simple Cox model with Glucose_max using coxph
+cox.Glucose_max <- coxph( Surv(Days, Status) ~ Glucose_max, data=icu_patients_df1)
+summary(cox.Glucose_max) # significant
+
+# fitting a simple Cox model with Glucose_diff using coxph
+cox.Glucose_diff <- coxph( Surv(Days, Status) ~ Glucose_diff, data=icu_patients_df1)
+summary(cox.Glucose_diff) # significant
+
+# fitting a simple Cox model with Albumin_max using coxph
+cox.Albumin_max <- coxph( Surv(Days, Status) ~ Albumin_max, data=icu_patients_df1)
+summary(cox.Albumin_max) # significant
+
+# fitting a simple Cox model with Albumin_diff using coxph
+cox.Albumin_diff <- coxph( Surv(Days, Status) ~ Albumin_diff, data=icu_patients_df1)
+summary(cox.Albumin_diff)
+
+# fitting a simple Cox model with Cholesterol_max using coxph
+cox.Cholesterol_max <- coxph( Surv(Days, Status) ~ Cholesterol_max, data=icu_patients_df1)
+summary(cox.Cholesterol_max) # significant
+
+# fitting a simple Cox model with Cholesterol_diff using coxph
+cox.Cholesterol_diff <- coxph( Surv(Days, Status) ~ Cholesterol_diff, data=icu_patients_df1)
+summary(cox.Cholesterol_diff) # significant
+
+# fitting a simple Cox model with SAPS1 using coxph
+cox.SAPS1 <- coxph( Surv(Days, Status) ~ SAPS1, data=icu_patients_df1)
+summary(cox.SAPS1) # significant
+
+# fitting a simple Cox model with SOFA using coxph
+cox.SOFA <- coxph( Surv(Days, Status) ~ SOFA, data=icu_patients_df1)
+summary(cox.SOFA) # significant
 
 ```
 
@@ -506,6 +566,14 @@ plot(km.model_gender, main="kaplan-meier survical curve", xlab = "Time(days)",yl
 
 # ----------------------------------------Gender----------------------------#
 summary(icu_patients_df1$Gender)
+
+# ----------------------------------------ICUType----------------------------#
+summary(icu_patients_df1$ICUType)
+
+# ----------------------------------------Age----------------------------#
+summary(icu_patients_df1$Age)
+ggplot(data = icu_patients_df1, aes(x = Age)) + geom_histogram(fill = "red")+
+ggtitle("Age histogram")
 
 # ----------------------------------------WBC_diff----------------------------#
 summary(icu_patients_df1$WBC_diff)
@@ -596,6 +664,17 @@ ggtitle("Cholesterol_min histogram")
 summary(icu_patients_df1$Cholesterol_max)
 ggplot(data = icu_patients_df1, aes(x = Cholesterol_max)) + geom_histogram(fill = "red")+
 ggtitle("Cholesterol_max histogram")
+
+# ----------------------------------------SAPS1--------------------------------------#
+summary(icu_patients_df1$SAPS1)
+ggplot(data = icu_patients_df1, aes(x = SAPS1)) + geom_histogram(fill = "red")+
+ggtitle("SAPS1 histogram")
+
+# ----------------------------------------SOFA---------------------------------------#
+summary(icu_patients_df1$SOFA)
+ggplot(data = icu_patients_df1, aes(x = SOFA)) + geom_histogram(fill = "red")+
+ggtitle("SOFA histogram")
+
 ```
 
 
