@@ -463,9 +463,43 @@ In this task, you are required to develop a Cox proportional hazards survival mo
 
 ####
 **Create your response to this task here, as a mixture of embedded (`knitr`) R code and any resulting outputs, and explanatory or commentary text.** 
+```{r}
+# basic EDA in task2
+
+# load the survival library
+library(survival)
+# read the dataset
+head(icu_patients_df1)
+nrow(icu_patients_df1)
+# Note: status = TRUE = event occurred, status = FALSE = no event 
+
+# summary the number of days
+summary(icu_patients_df1$Days)
+hist(icu_patients_df1$Days)
+
+# check the status
+table(icu_patients_df1$Status)
+
+# check age and gender
+summary(icu_patients_df1$Age)
+table(icu_patients_df1$Gender)
+
+# hist survival
+survival_year <- icu_patients_df1$Survival / 365
+hist(survival_year)
+
+# fit the KM (survival) model for data
+km.model <- survfit( Surv(Days, Status) ~ 1, type="kaplan-meier", data=icu_patients_df1)
+plot(km.model, xlim = c(1,2500), main="kaplan-meier survical curve", xlab = "Time(days)",
+     ylab = " % Alive = S(t)")
+abline(h=0.5,col="red")
+
+# fit the KM (survival) model by gender
+km.model_gender <- survfit( Surv(Days, Status) ~ Gender, type="kaplan-meier", data=icu_patients_df1)
+plot(km.model_gender, main="kaplan-meier survical curve", xlab = "Time(days)",ylab = " % Alive = S(t)", col=c("red","blue"))
 
 
-
+```
 ## Save, knit and submit
 
 **Reminder**: don't forget to save this file, to knit it to check that everything works, and then submit via the drop box in OpenLearning.
