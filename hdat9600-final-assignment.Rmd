@@ -189,6 +189,7 @@ library(ggplot2)
 library(DescTools)
 library(faraway)
 library(arm)
+library(ROCR)
 ```
 
 ```{r}
@@ -325,6 +326,7 @@ ggplot(data = icu_patients_df1, aes(x = Glucose_min)) + geom_histogram(fill = "s
 
 ```
 
+## Model Fitting
 
    Next, we fit each candidate variable as a univariate predictor of in hospital mortality. Out of the patient descriptor variables age was found to be significant while gender was not. Both clinical risk predictions scores were found to be significant, as was ICU type. Among the additional clinical measures we chose as candidate variables only FiO2 (max), pH (max), temperature (max), MAP (max and min), and glucose (min) were found to not be significant. 
 
@@ -396,6 +398,8 @@ PseudoR2(cand_backelim_fit, which = "all")
 
 ```
 
+## Model Diagnostics
+
 When diagnosing the quality of the model we first examined the binned residuals plot. Initially, slight alarm was raised over the residuals on the leftmost side of the bottom half of the plot. However, the residuals seem to broadly be acceptable. The halfnorm plot indicated two values of concern. Upon further investigation these patients had normal measurements for the variables used in our final model. Given the large size of the data these two patients should not be of much concern. 
 
 ```{r}
@@ -409,6 +413,13 @@ binnedplot(predict(final_model), residuals(final_model))
 halfnorm(hatvalues(final_model))
 # Inspecting suspect values
 icu_patients_df1[hatvalues(final_model) > 0.04, c("in_hospital_death", "Age", "ICUType", "SOFA", "SAPS1")]
+
+# ROC curve
+#pred_prob = predict(final_model, type = "response")
+#label_vec <- na.exclude(icu_patients_df1$in_hospital_death)
+#pred <- prediction(pred_prob, label_vec, label.ordering = NULL)
+#perf <- performance(pred, measure = "tpr", x.measure = "fpr")
+#plot(perf, col = rainbow(10))
 
 ```
 When interpreting the model it is best to default to the odds, thus, we first exponentiated the repression coefficients. The interpretation of such odds are as follows: the odds of dying in the ICU are 2.9% greater for every 1 year increase in age, 7.4% greater for every unit increase in SAPS1 score, 10.3% higher for every unit increase in SOFA score, 5.6% greater for every unit increase in maximum lactate measurement, 80.5% lower if you are in the surgical recovery unit compared to baseline (coronary care unit), 22.2% higher if you are in the medical ICU compared to baseline, and about 10% lower if you are in the surgical ICU compared to baseline.   
