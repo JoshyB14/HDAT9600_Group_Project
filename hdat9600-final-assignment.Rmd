@@ -500,6 +500,109 @@ plot(km.model_gender, main="kaplan-meier survical curve", xlab = "Time(days)",yl
 
 
 ```
+
+```{r}
+# just some intial EDA on some target variables as mentioned on the Task 2 issue forum on Github...
+
+# ----------------------------------------Gender----------------------------#
+summary(icu_patients_df1$Gender)
+
+# ----------------------------------------WBC_diff----------------------------#
+summary(icu_patients_df1$WBC_diff)
+ggplot(data = icu_patients_df1, aes(x = WBC_diff)) + geom_histogram(fill = "red")+
+ggtitle("WBC_diff histogram")
+
+# ----------------------------------------WBC_min----------------------------#
+summary(icu_patients_df1$WBC_min)
+ggplot(data = icu_patients_df1, aes(x = WBC_min)) + geom_histogram(fill = "red")+
+ggtitle("WBC_min histogram")
+
+# ----------------------------------------WBC_max----------------------------#
+summary(icu_patients_df1$WBC_max)
+ggplot(data = icu_patients_df1, aes(x = WBC_max)) + geom_histogram(fill = "red")+
+ggtitle("WBC_max histogram")
+
+# ----------------------------------------SaO2_diff----------------------------#
+summary(icu_patients_df1$SaO2_diff)
+ggplot(data = icu_patients_df1, aes(x = SaO2_diff)) + geom_histogram(fill = "red")+
+ggtitle("SaO2_diff histogram")
+
+# ----------------------------------------SaO2_min----------------------------#
+summary(icu_patients_df1$SaO2_min)
+ggplot(data = icu_patients_df1, aes(x = SaO2_min)) + geom_histogram(fill = "red")+
+ggtitle("SaO2_min histogram")
+
+# ----------------------------------------SaO2_max----------------------------#
+summary(icu_patients_df1$SaO2_max)
+ggplot(data = icu_patients_df1, aes(x = SaO2_max)) + geom_histogram(fill = "red")+
+ggtitle("SaO2_max histogram")
+
+# ----------------------------------------MAP_diff----------------------------#
+summary(icu_patients_df1$MAP_diff)
+ggplot(data = icu_patients_df1, aes(x = MAP_diff)) + geom_histogram(fill = "red")+
+ggtitle("MAP_diff histogram")
+
+# ----------------------------------------MAP_min----------------------------#
+summary(icu_patients_df1$MAP_min)
+ggplot(data = icu_patients_df1, aes(x = MAP_min)) + geom_histogram(fill = "red")+
+ggtitle("MAP_min histogram")
+
+# ----------------------------------------MAP_max----------------------------#
+summary(icu_patients_df1$MAP_max)
+ggplot(data = icu_patients_df1, aes(x = MAP_max)) + geom_histogram(fill = "red")+
+ggtitle("MAP_max histogram")
+
+# ----------------------------------------Glucose_diff----------------------------#
+summary(icu_patients_df1$Glucose_diff)
+ggplot(data = icu_patients_df1, aes(x = Glucose_diff)) + geom_histogram(fill = "red")+
+ggtitle("Glucose_diff histogram")
+
+# ----------------------------------------Glucose_min----------------------------#
+summary(icu_patients_df1$Glucose_min)
+ggplot(data = icu_patients_df1, aes(x = Glucose_min)) + geom_histogram(fill = "red")+
+ggtitle("Glucose_min histogram")
+
+# ----------------------------------------Glucose_max----------------------------#
+summary(icu_patients_df1$Glucose_max)
+ggplot(data = icu_patients_df1, aes(x = Glucose_max)) + geom_histogram(fill = "red")+
+ggtitle("Glucose_max histogram")
+
+# ----------------------------------------Albumin_diff----------------------------#
+summary(icu_patients_df1$Albumin_diff)
+ggplot(data = icu_patients_df1, aes(x = Albumin_diff)) + geom_histogram(fill = "red")+
+ggtitle("Albumin_diff histogram")
+
+# ----------------------------------------Albumin_min----------------------------#
+summary(icu_patients_df1$Albumin_min)
+ggplot(data = icu_patients_df1, aes(x = Albumin_min)) + geom_histogram(fill = "red")+
+ggtitle("Albumin_min histogram")
+
+# ----------------------------------------Albumin_max----------------------------#
+summary(icu_patients_df1$Albumin_max)
+ggplot(data = icu_patients_df1, aes(x = Albumin_max)) + geom_histogram(fill = "red")+
+ggtitle("Albumin_max histogram")
+
+# ----------------------------------------Cholesterol_diff----------------------------#
+summary(icu_patients_df1$Cholesterol_diff)
+ggplot(data = icu_patients_df1, aes(x = Cholesterol_diff)) + geom_histogram(fill = "red")+
+ggtitle("Cholesterol_diff histogram")
+
+# ----------------------------------------Cholesterol_min----------------------------#
+summary(icu_patients_df1$Cholesterol_min)
+ggplot(data = icu_patients_df1, aes(x = Cholesterol_min)) + geom_histogram(fill = "red")+
+ggtitle("Cholesterol_min histogram")
+
+# ----------------------------------------Cholesterol_max----------------------------#
+summary(icu_patients_df1$Cholesterol_max)
+ggplot(data = icu_patients_df1, aes(x = Cholesterol_max)) + geom_histogram(fill = "red")+
+ggtitle("Cholesterol_max histogram")
+```
+
+
+
+
+
+
 ## Save, knit and submit
 
 **Reminder**: don't forget to save this file, to knit it to check that everything works, and then submit via the drop box in OpenLearning.
