@@ -559,6 +559,25 @@ summary(cox.SAPS1) # significant
 cox.SOFA <- coxph( Surv(Days, Status) ~ SOFA, data=icu_patients_df1)
 summary(cox.SOFA) # significant
 
+# fitting a simple Cox model with Creatinine_max using coxph
+cox.Creatinine_max <- coxph( Surv(Days, Status) ~ Creatinine_max, data=icu_patients_df1)
+summary(cox.Creatinine_max) # significant
+
+# fitting a simple Cox model with Creatinine_diff using coxph
+cox.Creatinine_diff <- coxph( Surv(Days, Status) ~ Creatinine_diff, data=icu_patients_df1)
+summary(cox.Creatinine_diff) # significant
+
+# fitting a simple Cox model with Troponin_max using coxph
+cox.TroponinI_max <- coxph( Surv(Days, Status) ~ TroponinI_max, data=icu_patients_df1)
+summary(cox.TroponinI_max)
+
+# fitting a simple Cox model with Troponin_diff using coxph
+cox.TroponinI_diff <- coxph( Surv(Days, Status) ~ TroponinI_diff, data=icu_patients_df1)
+summary(cox.TroponinI_diff)
+
+
+
+
 ```
 
 ```{r}
@@ -674,6 +693,36 @@ ggtitle("SAPS1 histogram")
 summary(icu_patients_df1$SOFA)
 ggplot(data = icu_patients_df1, aes(x = SOFA)) + geom_histogram(fill = "red")+
 ggtitle("SOFA histogram")
+
+# ----------------------------------------Creatinine_diff----------------------------#
+summary(icu_patients_df1$Creatinine_diff)
+ggplot(icu_patients_df1, aes(Creatinine_diff)) + geom_histogram(fill = "red") +
+          ggtitle("Creatinine_diff histogram")
+
+# ----------------------------------------Creatinine_max----------------------------#
+summary(icu_patients_df1$Creatinine_max)
+ggplot(icu_patients_df1, aes(Creatinine_max)) + geom_histogram(fill = "red") +
+          ggtitle("Creatinine_max histogram")
+
+# ----------------------------------------Creatinine_min----------------------------#
+summary(icu_patients_df1$Creatinine_min)
+ggplot(icu_patients_df1, aes(Creatinine_min)) + geom_histogram(fill = "red") +
+          ggtitle("Creatinine_min histogram")
+
+# ----------------------------------------Troponin_diff----------------------------#
+summary(icu_patients_df1$TroponinI_diff)
+ggplot(icu_patients_df1, aes(TroponinI_diff)) + geom_histogram(fill = "red") +
+          ggtitle("TroponinI_diff histogram")
+
+# ----------------------------------------Troponin_max----------------------------#
+summary(icu_patients_df1$TroponinI_max)
+ggplot(icu_patients_df1, aes(TroponinI_max)) + geom_histogram(fill = "red") +
+          ggtitle("TroponinI_max histogram")
+
+# ----------------------------------------Troponin_min----------------------------#
+summary(icu_patients_df1$TroponinI_min)
+ggplot(icu_patients_df1, aes(TroponinI_min)) + geom_histogram(fill = "red") +
+          ggtitle("TroponinI_min histogram")
 
 ```
 
