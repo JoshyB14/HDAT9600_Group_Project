@@ -659,9 +659,9 @@ summary(cox.WBC_max)
 cox.WBC_diff <- coxph( Surv(Days, Status) ~ WBC_diff, data=icu_patients_df1)
 summary(cox.WBC_diff)  # significant
 
-# fitting a simple Cox model with SaO2_max using coxph
-cox.SaO2_max <- coxph( Surv(Days, Status) ~ SaO2_max, data=icu_patients_df1)
-summary(cox.SaO2_max)
+# fitting a simple Cox model with SaO2_min using coxph
+cox.SaO2_min <- coxph( Surv(Days, Status) ~ SaO2_min, data=icu_patients_df1)
+summary(cox.SaO2_min)
 
 # fitting a simple Cox model with SaO2_diff using coxph
 cox.SaO2_diff <- coxph( Surv(Days, Status) ~ SaO2_diff, data=icu_patients_df1)
@@ -674,6 +674,10 @@ summary(cox.MAP_max)
 # fitting a simple Cox model with MAP_diff using coxph
 cox.MAP_diff <- coxph( Surv(Days, Status) ~ MAP_diff, data=icu_patients_df1)
 summary(cox.MAP_diff)  # significant
+
+# fitting a simple Cox model with MAP_min using coxph
+cox.MAP_min <- coxph( Surv(Days, Status) ~ MAP_min, data=icu_patients_df1)
+summary(cox.MAP_min)    # significant
 
 # fitting a simple Cox model with Glucose_max using coxph
 cox.Glucose_max <- coxph( Surv(Days, Status) ~ Glucose_max, data=icu_patients_df1)
@@ -725,6 +729,35 @@ summary(cox.TroponinI_diff)
 
 ```
 
+
+```{r}
+# fitting series of multivariable Cox proportional hazards models 
+cox.mv1 <- coxph(Surv(Days, Status) ~ Age + SOFA + Glucose_max, data=na.omit(icu_patients_df1))
+summary(cox.mv1)
+
+cox.mv2 <- coxph(Surv(Days, Status) ~ ICUType + Age + SAPS1 + SOFA + Glucose_max, data=na.omit(icu_patients_df1))
+summary(cox.mv2)
+
+cox.mv3 <- coxph(Surv(Days, Status) ~ ICUType + Age + SAPS1 + SOFA + Creatinine_max + MAP_min + Glucose_max, data=na.omit(icu_patients_df1))
+summary(cox.mv3)
+
+cox.mv4 <- coxph(Surv(Days, Status) ~ ICUType + Age + SAPS1 + SOFA + Creatinine_max + MAP_min + Albumin_max + Glucose_max + TroponinI_max, data=na.omit(icu_patients_df1))
+summary(cox.mv4)
+
+# compare models
+print(anova(cox.mv1, cox.mv2))
+print(anova(cox.mv2, cox.mv3))
+print(anova(cox.mv2, cox.mv4))
+
+# From comparing models with anova() function, we found that cox.mv2 has significant p-value 0.03, thus we choose cox.mv2.
+# make further model comparisons to be sure all these variables should be retained using drop1()
+cox.mv2 <- coxph(Surv(Days, Status) ~ ICUType + Age + SAPS1 + SOFA + Glucose_max, data=na.omit(icu_patients_df1))
+print(drop1(cox.mv2, test="Chisq"))
+
+# remove Age and SAPS1 from the model after checking drop1() result
+cox.refit <- coxph(Surv(Days, Status) ~ ICUType + SOFA + Glucose_max, data=na.omit(icu_patients_df1))
+print(drop1(cox.refit, test="Chisq"))
+```
 ## Save, knit and submit
 
 **Reminder**: don't forget to save this file, to knit it to check that everything works, and then submit via the drop box in OpenLearning.
