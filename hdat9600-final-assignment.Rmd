@@ -463,6 +463,8 @@ In this task, you are required to develop a Cox proportional hazards survival mo
 
 ####
 **Create your response to this task here, as a mixture of embedded (`knitr`) R code and any resulting outputs, and explanatory or commentary text.** 
+
+## Task 2 EDA
 ```{r}
 # basic EDA in task2
 
@@ -492,7 +494,6 @@ hist(survival_year)
 
 
 ```{r}
-# just some intial EDA on some target variables as mentioned on the Task 2 issue forum on Github...
 
 # ----------------------------------------Gender----------------------------#
 summary(icu_patients_df1$Gender)
@@ -637,7 +638,7 @@ ggplot(icu_patients_df1, aes(TroponinI_min)) + geom_histogram(fill = "red") +
 
 ```
 
-
+## Univariate Cox Models
 ```{r}
 # fitting a simple Cox model with gender using coxph
 cox.gender <- coxph( Surv(Days, Status) ~ Gender, data=icu_patients_df1)
@@ -729,9 +730,10 @@ summary(cox.TroponinI_diff)
 
 ```
 
+## Multivariate Cox Models
 
 ```{r}
-# fitting series of multivariable Cox proportional hazards models 
+# fitting series of multivariate Cox proportional hazards models 
 cox.mv1 <- coxph(Surv(Days, Status) ~ Age + SOFA + Glucose_max, data=na.omit(icu_patients_df1))
 summary(cox.mv1)
 
@@ -748,16 +750,22 @@ summary(cox.mv4)
 print(anova(cox.mv1, cox.mv2))
 print(anova(cox.mv2, cox.mv3))
 print(anova(cox.mv2, cox.mv4))
+print(anova(cox.mv1, cox.mv4))
 
-# From comparing models with anova() function, we found that cox.mv2 has significant p-value 0.03, thus we choose cox.mv2.
-# make further model comparisons to be sure all these variables should be retained using drop1()
+```
+_From comparing models with the anova() function, we found that cox.mv2 has significant p-value 0.03, thus we choose cox.mv2._
+_Hence make further model comparisons to be sure all these variables should be retained using drop1()_
+```{r}
 cox.mv2 <- coxph(Surv(Days, Status) ~ ICUType + Age + SAPS1 + SOFA + Glucose_max, data=na.omit(icu_patients_df1))
 print(drop1(cox.mv2, test="Chisq"))
-
-# remove Age and SAPS1 from the model after checking drop1() result
+```
+_Remove Age and SAPS1 from the model after checking drop1() result_
+```{r}
 cox.refit <- coxph(Surv(Days, Status) ~ ICUType + SOFA + Glucose_max, data=na.omit(icu_patients_df1))
 print(drop1(cox.refit, test="Chisq"))
 ```
+
+
 ## Save, knit and submit
 
 **Reminder**: don't forget to save this file, to knit it to check that everything works, and then submit via the drop box in OpenLearning.
