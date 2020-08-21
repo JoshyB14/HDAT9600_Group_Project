@@ -486,10 +486,6 @@ table(icu_patients_df1$Status)
 summary(icu_patients_df1$Age)
 summary(icu_patients_df1$Gender)
 
-# hist survival
-survival_year <- icu_patients_df1$Survival / 365
-hist(survival_year)
-
 ```
 
 
@@ -581,7 +577,7 @@ summary(cox.WBC_max)     # significant
 
 # fitting a simple Cox model with WBC_diff using coxph
 cox.WBC_diff <- coxph( Surv(Days, Status) ~ WBC_diff, data=icu_patients_df1)
-summary(cox.WBC_diff)  # significant
+summary(cox.WBC_diff) 
 
 # fitting a simple Cox model with Glucose_max using coxph
 cox.Glucose_max <- coxph( Surv(Days, Status) ~ Glucose_max, data=icu_patients_df1)
@@ -605,8 +601,7 @@ summary(cox.HR_max)  # significant
 
 # fitting a simple Cox model with RespRate_max using coxph
 cox.RespRate_max <- coxph( Surv(Days, Status) ~ RespRate_max, data=icu_patients_df1)
-summary(cox.RespRate_max)  # significant
-
+summary(cox.RespRate_max)  
 ```
 
 ## Multivariate Cox Models
@@ -619,33 +614,29 @@ summary(cox.mv1)
 cox.mv2 <- coxph(Surv(Days, Status) ~ SAPS1 + SOFA + WBC_max + HR_max, data=icu_patients_df1)
 summary(cox.mv2)
 
-cox.mv3 <- coxph(Surv(Days, Status) ~ SAPS1 + SOFA + WBC_max + HR_max + RespRate_max, data=icu_patients_df1)
+cox.mv3 <- coxph(Surv(Days, Status) ~ SAPS1 + SOFA + WBC_max + HR_max + Glucose_max, data=icu_patients_df1)
 summary(cox.mv3)
-
-cox.mv4 <- coxph(Surv(Days, Status) ~ SAPS1 + SOFA + WBC_max + HR_max + RespRate_max + Glucose_max, data=icu_patients_df1)
-summary(cox.mv4)
 
 # compare models
 print(anova(cox.mv1, cox.mv2))
 print(anova(cox.mv2, cox.mv3))
-print(anova(cox.mv2, cox.mv4))
 ```
 _From comparing models with the anova() function, we found that cox.mv2 has significant p-value 0.049, thus we choose cox.mv2._
 _Hence make further model comparisons to be sure all these variables should be retained using drop1()_
 ```{r}
-cox.mv2 <- coxph(Surv(Days, Status) ~ SAPS1 + SOFA + WBC_max + HR_max, data=icu_patients_df1)
+cox.mv2 <- coxph(Surv(Days, Status) ~ SAPS1 + SOFA + WBC_max + HR_max + Glucose_max , data=icu_patients_df1)
 print(drop1(cox.mv2, test="Chisq"))
 ```
 _Remove SAPS1 and SOFA from the model after checking drop1() result_
 ```{r}
-cox.refit <- coxph(Surv(Days, Status) ~ WBC_max + HR_max, data=icu_patients_df1)
+cox.refit <- coxph(Surv(Days, Status) ~ WBC_max, data=icu_patients_df1)
 print(drop1(cox.refit, test="Chisq"))
 ```
 
 
 The outputs from univariate cox show that the demographic variables like age and gender are not statistically significant, thus, we would not keep it in the models. And there is no significance regrading `ICUType` is also different with our initial expected.
 
-Compared to the `cox.refit` model, `cox.mv2` has a lower AIC value, so we prefer the `cox.mv2` model.
+Compared to the `cox.refit` model, `cox.mv3` has a lower AIC value, so we prefer the `cox.mv2` model.
 
 
 ## Save, knit and submit
