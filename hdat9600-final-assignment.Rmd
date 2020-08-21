@@ -643,6 +643,11 @@ print(drop1(cox.refit, test="Chisq"))
 ```
 
 
+The outputs from univariate cox show that the demographic variables like age and gender are not statistically significant, thus, we would not keep it in the models. And there is no significance regrading `ICUType` is also different with our initial expected.
+
+Compared to the `cox.refit` model, `cox.mv2` has a lower AIC value, so we prefer the `cox.mv2` model.
+
+
 ## Save, knit and submit
 
 **Reminder**: don't forget to save this file, to knit it to check that everything works, and then submit via the drop box in OpenLearning.
