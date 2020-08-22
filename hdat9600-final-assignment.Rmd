@@ -488,7 +488,7 @@ summary(icu_patients_df1$Gender)
 
 ```
 
-
+The following variables of interest were chosen for the following reasons: Gender was chosen as we wanted to investigate whether this had an effect on patient outcomes alongside the ICU Type and Age. These variables were simple to test for and if significant, can provide some indication as to underlying causes of why death/ survival was the outcome. WBC variables were chosen as WBC counts can infer the presence of infection / chronic disease, as such we felt that this was an important set of variables to test for. Furthermore glucose levels were chosen as potentially significant variables to test for as they too can infer both underlying physiological/ renal system issues, or the presence of chronic disease (diabetes). Heart rate and respiratory rates were also chosen as variables of interest as these measures have well defined homeostatic ranges, which in turn, if out of this normal range, can infer the presence of an underlying physiological cause that could alter these values. Finally both the SAPS1 and SOFA variables were chosen as they represent an amalgamation of clinical measures that attempt to address sequential organ failure (SOFA) and a collection of physiological scores (SAPS1). As both these variables address many different clinical and physiological measures in one score, we felt it key to include these as variables of interest.
 ```{r}
 
 # ----------------------------------------Gender----------------------------#
@@ -499,60 +499,73 @@ summary(icu_patients_df1$ICUType)
 
 # ----------------------------------------Age----------------------------#
 summary(icu_patients_df1$Age)
+
 ggplot(data = icu_patients_df1, aes(x = Age)) + geom_histogram(fill = "red")+
-ggtitle("Age histogram")
+   geom_vline(xintercept = mean(icu_patients_df1$Age), col="blue")+
+   ggtitle("Age histogram")
 
 # ----------------------------------------WBC_diff----------------------------#
 summary(icu_patients_df1$WBC_diff)
 ggplot(data = icu_patients_df1, aes(x = WBC_diff)) + geom_histogram(fill = "red")+
-ggtitle("WBC_diff histogram")
+   geom_vline(xintercept = mean(icu_patients_df1$WBC_diff), col="blue")+
+   ggtitle("WBC_diff histogram")
 
 # ----------------------------------------WBC_min----------------------------#
 summary(icu_patients_df1$WBC_min)
 ggplot(data = icu_patients_df1, aes(x = WBC_min)) + geom_histogram(fill = "red")+
-ggtitle("WBC_min histogram")
+    geom_vline(xintercept = mean(icu_patients_df1$WBC_min), col="blue")+
+   ggtitle("WBC_min histogram")
 
 # ----------------------------------------WBC_max----------------------------#
 summary(icu_patients_df1$WBC_max)
 ggplot(data = icu_patients_df1, aes(x = WBC_max)) + geom_histogram(fill = "red")+
-ggtitle("WBC_max histogram")
+    geom_vline(xintercept = mean(icu_patients_df1$WBC_max), col="blue")+
+   ggtitle("WBC_max histogram")
 
 # ----------------------------------------Glucose_diff----------------------------#
 summary(icu_patients_df1$Glucose_diff)
 ggplot(data = icu_patients_df1, aes(x = Glucose_diff)) + geom_histogram(fill = "red")+
-ggtitle("Glucose_diff histogram")
+   geom_vline(xintercept = mean(icu_patients_df1$Glucose_diff), col="blue")+
+   ggtitle("Glucose_diff histogram")
 
 # ----------------------------------------Glucose_min----------------------------#
 summary(icu_patients_df1$Glucose_min)
 ggplot(data = icu_patients_df1, aes(x = Glucose_min)) + geom_histogram(fill = "red")+
-ggtitle("Glucose_min histogram")
+   geom_vline(xintercept = mean(icu_patients_df1$Glucose_min), col="blue")+
+   ggtitle("Glucose_min histogram")
 
 # ----------------------------------------Glucose_max----------------------------#
 summary(icu_patients_df1$Glucose_max)
 ggplot(data = icu_patients_df1, aes(x = Glucose_max)) + geom_histogram(fill = "red")+
-ggtitle("Glucose_max histogram")
+   geom_vline(xintercept = mean(icu_patients_df1$Glucose_max), col="blue")+
+   ggtitle("Glucose_max histogram")
 
 
 # ----------------------------------------SAPS1--------------------------------------#
 summary(icu_patients_df1$SAPS1)
 ggplot(data = icu_patients_df1, aes(x = SAPS1)) + geom_histogram(fill = "red")+
-ggtitle("SAPS1 histogram")
+   geom_vline(xintercept = mean(icu_patients_df1$SAPS1), col="blue")+
+   ggtitle("SAPS1 histogram")
 
 # ----------------------------------------SOFA---------------------------------------#
 summary(icu_patients_df1$SOFA)
 ggplot(data = icu_patients_df1, aes(x = SOFA)) + geom_histogram(fill = "red")+
-ggtitle("SOFA histogram")
+   geom_vline(xintercept = mean(icu_patients_df1$SOFA), col="blue")+
+   ggtitle("SOFA histogram")
 
 # --------------------------------------HR_max---------------------------------------#
 summary(icu_patients_df1$HR_max)
 ggplot(data = icu_patients_df1, aes(x = HR_max)) + geom_histogram(fill = "red")+
-ggtitle("HR_max histogram")
+   geom_vline(xintercept = mean(icu_patients_df1$HR_max), col="blue")+
+   ggtitle("HR_max histogram")
 
 # ---------------------------------------RespRate_max----------------------------------#
 summary(icu_patients_df1$RespRate_max)
 ggplot(data = icu_patients_df1, aes(x = RespRate_max)) + geom_histogram(fill = "red")+
-ggtitle("RespRate_max histogram")
+   geom_vline(xintercept = mean(icu_patients_df1$RespRate_max), col="blue")+
+   ggtitle("RespRate_max histogram")
 ```
+
 
 ## Univariate Cox Models
 ```{r}
@@ -627,14 +640,14 @@ _Hence make further model comparisons to be sure all these variables should be r
 cox.mv2 <- coxph(Surv(Days, Status) ~ SAPS1 + SOFA + WBC_max + HR_max + Glucose_max , data=icu_patients_df1)
 print(drop1(cox.mv2, test="Chisq"))
 ```
-_Remove SAPS1 and SOFA from the model after checking drop1() result_
+_Remove SAPS1, SOFA and HR_max from the model after checking drop1() result_
 ```{r}
-cox.refit <- coxph(Surv(Days, Status) ~ WBC_max, data=icu_patients_df1)
+cox.refit <- coxph(Surv(Days, Status) ~ WBC_max + Glucose_max, data=icu_patients_df1)
 print(drop1(cox.refit, test="Chisq"))
 ```
 
 
-The outputs from univariate cox show that the demographic variables like age and gender are not statistically significant, thus, we would not keep it in the models. And there is no significance regrading `ICUType` is also different with our initial expected.
+The outputs from univariate cox show that the demographic variables like age and gender are not statistically significant, thus, we would not keep it in the models. And there is no significance regrading `ICUType` is also different with our initial expected. Furthermore after completing the drop1() step, we found that WBC_max and Glucose_max were the two significant terms from our preferred model cox.mv2.
 
 Compared to the `cox.refit` model, `cox.mv3` has a lower AIC value, so we prefer the `cox.mv2` model.
 
