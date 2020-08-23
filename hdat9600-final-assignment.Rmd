@@ -646,10 +646,27 @@ cox.refit <- coxph(Surv(Days, Status) ~ WBC_max + Glucose_max, data=icu_patients
 print(drop1(cox.refit, test="Chisq"))
 ```
 
+```{r}
+library(survminer)
+# testing for proportional hazards assumption using cox.zph()
+prop.mv <- cox.zph(cox.refit)
+prop.mv
+
+# graphical diagnostics using the function ggcoxzph()
+ggcoxzph(prop.mv)
+
+# assessing linearity
+linear.mv <- ggcoxfunctional(cox.refit)
+linear.mv
+```
+The output from the proportional hazards test shows that the test is non-statitically significant (p-value = 0.72 for WBC_max and p-value = 0.05 for HR_max. The global test is also not statistically significant (p-value = 0.74). Therefore, the models meets the proportional harzard assumption. 
+By plotting the Martingale residuals against the two continuous variables, it shows linearity in relationship betwwen the log hazard and the covariates. 
 
 The outputs from univariate cox show that the demographic variables like age and gender are not statistically significant, thus, we would not keep it in the models. And there is no significance regrading `ICUType` is also different with our initial expected. Furthermore after completing the drop1() step, we found that WBC_max and Glucose_max were the two significant terms from our preferred model cox.mv2.
 
-Compared to the `cox.refit` model, `cox.mv3` has a lower AIC value, so we prefer the `cox.mv2` model.
+By performing our survival analysis, it shows that the survival rate is correlated with WBC_max and Glucose_max. 
+One reason that could explain this might be that high WBC is an indication for infection and sepsis, which may contribute to death.
+High glucose level might be an indication for diabetes, which is a risk factor and comorbidity in many cases. 
 
 
 ## Save, knit and submit
